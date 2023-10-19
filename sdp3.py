@@ -1,4 +1,4 @@
-# Класс, представляющий книгу в библиотеке
+
 class Book:
     def __init__(self, title, author, borrower=None):
         self.title = title
@@ -14,7 +14,7 @@ class Book:
         else:
             return "Книга в библиотеке"
 
-# Класс, представляющий библиотеку
+
 class Library:
     def __init__(self):
         self.books = []
@@ -28,7 +28,7 @@ class Library:
                 return book
         return None
 
-# Адаптер для упрощения взаимодействия библиотекаря с библиотекой
+
 class LibrarianAdapter:
     def __init__(self, library):
         self.library = library
