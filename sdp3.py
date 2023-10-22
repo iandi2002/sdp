@@ -1,68 +1,33 @@
+class CurrencyConverterService:
+    def convert(self, amount, from_currency, to_currency):
+        exchange_rate = {
+    'USD': {'RUB': 75.0, 'KZ': 433.0},
+    'RUB': {'USD': 0.0133, 'KZ': 5.77},
+    'KZ': {'USD': 0.0023, 'RUB': 0.173}
+}
+        return amount * exchange_rate[from_currency][to_currency]
 
-class Book:
-    def __init__(self, title, author, borrower=None):
-        self.title = title
-        self.author = author
-        self.borrower = borrower
-
-    def is_borrowed(self):
-        return self.borrower is not None
-
-    def get_borrower_name(self):
-        if self.is_borrowed():
-            return self.borrower
-        else:
-            return "Книга в библиотеке"
-
-
-class Library:
+class Adapter:
     def __init__(self):
-        self.books = []
+        self.service = CurrencyConverterService()
 
-    def add_book(self, book):
-        self.books.append(book)
+    def convert(self, amount, from_currency, to_currency):
+        return self.service.convert(amount, from_currency, to_currency)
 
-    def find_book(self, title):
-        for book in self.books:
-            if book.title == title:
-                return book
-        return None
+class CurrencyConverter:
+    def __init__(self, adapter):
+        self.adapter = adapter
 
-
-class LibrarianAdapter:
-    def __init__(self, library):
-        self.library = library
-
-    def get_borrower_info(self, book_title):
-        book = self.library.find_book(book_title)
-        if book:
-            if book.is_borrowed():
-                return f"Книга '{book.title}' взята у {book.get_borrower_name()}"
-            else:
-                return f"Книга '{book.title}' в библиотеке"
-        else:
-            return f"Книга '{book_title}' не найдена в библиотеке"
+    def convert(self, amount, from_currency, to_currency):
+        return self.adapter.convert(amount, from_currency, to_currency)
 
 if __name__ == "__main__":
-    library = Library()
-    book1 = Book("Война и мир", "Лев Толстой")
-    book2 = Book("Преступление и наказание", "Федор Достоевский")
-    library.add_book(book1)
-    library.add_book(book2)
+    adapter = Adapter()
+    converter = CurrencyConverter(adapter)
 
-    librarian = LibrarianAdapter(library)
+    amount = float(input("Введите сумму: "))
+    from_currency = input("Исходная валюта: ").upper()
+    to_currency = input("Целевая валюта: ").upper()
 
-    while True:
-        print("Что хотите сделать?")
-        print("1. Узнать информацию о книге")
-        print("2. Выйти")
-        choice = input("Ваш выбор: ")
-
-        if choice == "1":
-            book_title = input("Введите название книги: ")
-            info = librarian.get_borrower_info(book_title)
-            print(info)
-        elif choice == "2":
-            break
-        else:
-            print("Неверный выбор. Попробуйте снова.")
+    converted_amount = converter.convert(amount, from_currency, to_currency)
+    print(f"{amount} {from_currency} = {converted_amount} {to_currency}")
